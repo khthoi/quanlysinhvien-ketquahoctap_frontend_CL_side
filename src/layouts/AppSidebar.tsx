@@ -32,6 +32,7 @@ import {
     faMoon,
     faSun
 } from '@fortawesome/free-solid-svg-icons';
+import { useRouter, usePathname } from 'next/navigation';
 
 interface MenuItem {
     id: string;
@@ -48,6 +49,8 @@ interface AppSidebarProps {
 }
 
 const AppSidebar: React.FC<AppSidebarProps> = ({ defaultCollapsed = false }) => {
+    const pathname = usePathname();
+    const router = useRouter();
     const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed);
     const [expandedMenus, setExpandedMenus] = useState<string[]>(['academic']);
     const [activeItem, setActiveItem] = useState('dashboard');
@@ -73,6 +76,29 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ defaultCollapsed = false }) => 
         }
     };
 
+    // Tự động highlight theo route
+    useEffect(() => {
+        const findActiveId = (items: MenuItem[]): string | null => {
+            for (const item of items) {
+                if (item.href === pathname) return item.id;
+                if (item.children) {
+                    for (const child of item.children) {
+                        if (child.href === pathname) {
+                            setExpandedMenus(prev =>
+                                prev.includes(item.id) ? prev : [...prev, item.id]
+                            );
+                            return child.id;
+                        }
+                    }
+                }
+            }
+            return null;
+        };
+
+        const activeId = findActiveId(mainMenuItems);
+        setActiveItem(activeId || 'dashboard');
+    }, [pathname]);
+
     const toggleSubmenu = (menuId: string) => {
         if (isCollapsed) {
             setIsCollapsed(false);
@@ -87,12 +113,11 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ defaultCollapsed = false }) => 
         );
     };
 
-    const handleItemClick = (itemId: string, href?: string) => {
-        setActiveItem(itemId);
-        if (href) {
-            window.location.href = href;
-        }
+    const handleItemClick = (id: string, href?: string) => {
+        setActiveItem(id);
+        if (href) router.push(href);
     };
+
 
     // Menu items
     const mainMenuItems: MenuItem[] = [
@@ -106,7 +131,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ defaultCollapsed = false }) => 
             id: 'profile',
             label: 'Hồ sơ cá nhân',
             icon: faUser,
-            href: '/profile'
+            href: '/user-profile'
         },
         {
             id: 'academic',
@@ -115,29 +140,21 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ defaultCollapsed = false }) => 
             children: [
                 {
                     id: 'schedule',
-                    label: 'Thời khóa biểu',
+                    label: 'Lớp học phần',
                     icon: faCalendarAlt,
-                    href: '/schedule'
-                },
-                {
-                    id: 'courses',
-                    label: 'Đăng ký học phần',
-                    icon: faClipboardList,
-                    href: '/courses',
-                    badge: 'Mới',
-                    badgeColor: 'bg-green-500'
+                    href: '/lich-hoc'
                 },
                 {
                     id: 'grades',
                     label: 'Kết quả học tập',
                     icon: faChartBar,
-                    href: '/grades'
+                    href: '/ket-qua-hoc-tap'
                 },
                 {
                     id: 'curriculum',
                     label: 'Chương trình đào tạo',
                     icon: faBook,
-                    href: '/curriculum'
+                    href: '/chuong-trinh-dao-tao'
                 }
             ]
         },
@@ -154,8 +171,8 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ defaultCollapsed = false }) => 
                 <button
                     onClick={() => hasChildren ? toggleSubmenu(item.id) : handleItemClick(item.id, item.href)}
                     className={`
-            w-full flex items-center justify-between px-3 py-2. 5 rounded-xl text-left transition-all duration-200 group relative
-            ${isChild ? 'pl-10' : ''}
+            w-full flex items-center justify-between px-3 py-1.5 rounded-xl text-left transition-all duration-200 group relative
+            ${isChild ? 'pl-4' : ''}
             ${isActive
                             ? 'bg-red-50 text-red-700'
                             : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
@@ -313,7 +330,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ defaultCollapsed = false }) => 
                     onClick={() => {
                         // Handle logout
                         document.cookie = 'access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-                        window.location.href = '/login';
+                        router.push('/login');
                     }}
                     className={`
             flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-red-50 hover:text-red-700 transition-all group

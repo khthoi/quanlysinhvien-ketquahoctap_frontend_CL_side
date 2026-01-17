@@ -1,8 +1,11 @@
+import { Metadata } from "next";
+import DashboardPage from "@/components/pages/Dashboard";
+
+export const metadata: Metadata = {
+  title: "Dashboard - Hệ thống quản lý sinh viên",
+  description: "Xem tổng quan kết quả học tập và thông tin sinh viên.",
+};
+
 export default function Dashboard() {
-  return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
-      <p>Welcome to the dashboard page!</p>
-    </div>
-  );
+  return <DashboardPage />;
 }

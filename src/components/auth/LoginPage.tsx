@@ -20,6 +20,7 @@ import {
     faBook,
     faAward
 } from '@fortawesome/free-solid-svg-icons';
+import router from 'next/router';
 
 interface LoginFormData {
     tenDangNhap: string;
@@ -114,7 +115,7 @@ const LoginPage: React.FC = () => {
                 if (decoded && decoded.vaiTro === 'SINH_VIEN') {
                     // Là sinh viên → lưu cookie và redirect
                     setCookie('access_token', data.access_token, rememberMe ? 30 : 7);
-                    window.location.href = '/';
+                    router.push("/");
                 } else {
                     // Không phải sinh viên → xóa token (nếu có), hiển thị lỗi
                     deleteCookie('access_token');
@@ -149,7 +150,7 @@ const LoginPage: React.FC = () => {
 
         const token = getCookie('access_token');
         if (token) {
-            window.location.href = '/'; // hoặc dùng next/navigation nếu dùng App Router
+            router.push("/"); // hoặc dùng next/navigation nếu dùng App Router
         }
     }, []); // Chỉ chạy 1 lần khi component mount
 

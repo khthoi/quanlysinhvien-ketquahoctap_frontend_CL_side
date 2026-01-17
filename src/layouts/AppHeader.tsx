@@ -27,6 +27,7 @@ import {
   faYoutube,
   faTiktok
 } from '@fortawesome/free-brands-svg-icons';
+import router from 'next/router';
 
 // Interface cho thông tin sinh viên
 interface SinhVienProfile {
@@ -130,7 +131,7 @@ const AppHeader: React.FC = () => {
     deleteCookie('access_token');
     setIsAuthenticated(false);
     setUserProfile(null);
-    window.location.href = '/login';
+    router.push('/login');
   };
 
   // Hàm đăng xuất
@@ -139,7 +140,7 @@ const AppHeader: React.FC = () => {
     setIsAuthenticated(false);
     setUserProfile(null);
     setIsDropdownOpen(false);
-    window.location.href = '/login';
+    router.push('/login');
   };
 
   // Kiểm tra authentication khi component mount
@@ -298,7 +299,7 @@ const AppHeader: React.FC = () => {
         {/* Menu Items */}
         <div className="py-2">
           <a
-            href="/profile"
+            href="/user-profile"
             className="flex items-center px-5 py-3 text-gray-700 hover:bg-gray-50 hover:text-red-700 transition-colors group"
             onClick={() => setIsDropdownOpen(false)}
           >
@@ -427,10 +428,10 @@ const AppHeader: React.FC = () => {
                 <a href="#" className="w-7 h-7 bg-gray-200 hover:bg-red-700 hover:text-white text-gray-600 rounded-full flex items-center justify-center transition-colors">
                   <FontAwesomeIcon icon={faFacebookF} className="text-xs" />
                 </a>
-                <a href="#" className="w-7 h-7 bg-gray-200 hover: bg-red-700 hover: text-white text-gray-600 rounded-full flex items-center justify-center transition-colors">
+                <a href="#" className="w-7 h-7 bg-gray-200 hover:bg-red-700 hover:text-white text-gray-600 rounded-full flex items-center justify-center transition-colors">
                   <FontAwesomeIcon icon={faYoutube} className="text-xs" />
                 </a>
-                <a href="#" className="w-7 h-7 bg-gray-200 hover: bg-red-700 hover: text-white text-gray-600 rounded-full flex items-center justify-center transition-colors">
+                <a href="#" className="w-7 h-7 bg-gray-200 hover:bg-red-700 hover:text-white text-gray-600 rounded-full flex items-center justify-center transition-colors">
                   <FontAwesomeIcon icon={faTiktok} className="text-xs" />
                 </a>
               </div>
@@ -503,13 +504,6 @@ const AppHeader: React.FC = () => {
                     >
                       <FontAwesomeIcon icon={faSignInAlt} />
                       <span>Đăng nhập</span>
-                    </a>
-                    <a
-                      href="#register"
-                      className="flex items-center space-x-2 px-5 py-2.5 bg-red-700 text-white rounded-full font-medium hover:bg-red-800 transition-colors shadow-md hover:shadow-lg"
-                    >
-                      <FontAwesomeIcon icon={faUser} />
-                      <span>Đăng ký</span>
                     </a>
                   </div>
                 )}
