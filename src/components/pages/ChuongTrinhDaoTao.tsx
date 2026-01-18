@@ -33,7 +33,7 @@ import Button from '@/components/ui/Button';
 import Table from '@/components/ui/Table';
 import Modal from '@/components/ui/Modal';
 import Alert from '@/components/ui/Alert';
-import router from 'next/router';
+import { useRouter } from 'next/navigation';
 
 // ==================== INTERFACES ====================
 
@@ -117,7 +117,7 @@ const ChuongTrinhDaoTaoPage: React.FC = () => {
     // Modal states
     const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
     const [selectedMonHoc, setSelectedMonHoc] = useState<MonHocCTDT | null>(null);
-
+    const router = useRouter();
     // Alert state
     const [alertState, setAlertState] = useState<AlertState>({
         show: false,

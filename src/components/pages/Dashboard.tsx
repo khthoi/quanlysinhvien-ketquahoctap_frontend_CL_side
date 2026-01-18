@@ -33,7 +33,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import Alert from '@/components/ui/Alert';
 import Button from '@/components/ui/Button';
-import router from 'next/router';
+import { useRouter } from 'next/navigation';
 
 // Interfaces
 interface ThongKeTongQuan {
@@ -188,7 +188,8 @@ const DashboardPage: React.FC = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
-
+    const router = useRouter();
+    
     // Get cookie helper
     const getCookie = (name: string): string | null => {
         if (typeof document === 'undefined') return null;

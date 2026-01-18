@@ -20,7 +20,7 @@ import {
     faBook,
     faAward
 } from '@fortawesome/free-solid-svg-icons';
-import router from 'next/router';
+import { useRouter } from 'next/navigation';
 
 interface LoginFormData {
     tenDangNhap: string;
@@ -41,6 +41,7 @@ const LoginPage: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [rememberMe, setRememberMe] = useState(false);
+    const router = useRouter();
 
     // Kiểm tra form hợp lệ
     const isFormValid = formData.tenDangNhap.trim() !== '' && formData.password.trim() !== '';

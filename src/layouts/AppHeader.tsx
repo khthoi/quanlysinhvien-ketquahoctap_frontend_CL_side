@@ -27,7 +27,7 @@ import {
   faYoutube,
   faTiktok
 } from '@fortawesome/free-brands-svg-icons';
-import router from 'next/router';
+import { useRouter } from 'next/navigation';
 
 // Interface cho thông tin sinh viên
 interface SinhVienProfile {
@@ -83,7 +83,7 @@ const AppHeader: React.FC = () => {
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  
+  const router = useRouter();
   // Auth states
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);

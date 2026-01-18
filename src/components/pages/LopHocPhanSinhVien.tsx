@@ -32,9 +32,9 @@ import Modal from '@/components/ui/Modal';
 import Alert from '@/components/ui/Alert';
 import SearchableSelect, { SearchableSelectOption } from '@/components/ui/SearchableSelect';
 import { width } from '@fortawesome/free-brands-svg-icons/fa11ty';
-import router from 'next/router';
+import { useRouter } from 'next/navigation';
 
-// ==================== INTERFACES ====================
+// ==================== INTERFACES =====================//
 
 interface Khoa {
   id: number;
@@ -145,7 +145,7 @@ const LopHocPhanPage: React.FC = () => {
   const [namHocs, setNamHocs] = useState<NamHocWithHocKy[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isFiltering, setIsFiltering] = useState(false);
-
+  const router = useRouter();
   // Filter states
   const [selectedNamHocId, setSelectedNamHocId] = useState<string | number>('');
   const [selectedHocKyId, setSelectedHocKyId] = useState<string | number>('');

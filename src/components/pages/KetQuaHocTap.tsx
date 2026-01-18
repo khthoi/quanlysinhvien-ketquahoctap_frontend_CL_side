@@ -34,8 +34,7 @@ import Table from '@/components/ui/Table';
 import Modal from '@/components/ui/Modal';
 import Alert from '@/components/ui/Alert';
 import SearchableSelect, { SearchableSelectOption } from '@/components/ui/SearchableSelect';
-import router from 'next/router';
-
+import { useRouter } from 'next/navigation';
 // ==================== INTERFACES ====================
 
 interface NamHoc {
@@ -163,7 +162,7 @@ const KetQuaHocTapPage:  React.FC = () => {
   const [selectedKetQua, setSelectedKetQua] = useState<KetQuaHocTap | null>(null);
   const [isKTKLModalOpen, setIsKTKLModalOpen] = useState(false);
   const [ktklFilter, setKtklFilter] = useState<string | number>('');
-
+  const router = useRouter();
   // Alert state
   const [alertState, setAlertState] = useState<AlertState>({
     show: false,

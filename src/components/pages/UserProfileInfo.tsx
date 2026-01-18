@@ -31,7 +31,7 @@ import Input from '@/components/ui/Input';
 import Modal from '@/components/ui/Modal';
 import Alert from '@/components/ui/Alert';
 import Select, { SelectOption } from '@/components/ui/Select';
-import router from 'next/router';
+import { useRouter } from 'next/navigation';
 
 // Interfaces
 interface Khoa {
@@ -125,6 +125,7 @@ const UserProfileInfo: React.FC = () => {
     const [profile, setProfile] = useState<SinhVienProfile | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const router = useRouter();
 
     // Modal states
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
