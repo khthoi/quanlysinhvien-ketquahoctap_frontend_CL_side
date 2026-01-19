@@ -8,14 +8,7 @@ export const metadata: Metadata = {
 
 export default function LopHocPhan() {
     return (
-        <>
-        <div className="pt-5"></div>
-        <div className="pt-5"></div>
-        <div className="pt-5"></div>
-        <div className="pt-5"></div>
-        <div className="pt-5"></div>
-        <div className="pt-3"></div>
-        
+        <>        
         <LopHocPhanPage />
         </>
     );

@@ -4,7 +4,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faUser,
-    faEdit,
     faKey,
     faIdCard,
     faCalendarAlt,
@@ -16,7 +15,6 @@ import {
     faBuilding,
     faUserGraduate,
     faSpinner,
-    faSave,
     faTimes,
     faCheckCircle,
     faExclamationTriangle,
@@ -30,7 +28,6 @@ import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Modal from '@/components/ui/Modal';
 import Alert from '@/components/ui/Alert';
-import Select, { SelectOption } from '@/components/ui/Select';
 import { useRouter } from 'next/navigation';
 
 // Interfaces
@@ -82,28 +79,12 @@ interface SinhVienProfile {
     khenThuongKyLuat: any[];
 }
 
-interface UpdateProfileData {
-    hoTen: string;
-    ngaySinh: string;
-    gioiTinh: string;
-    diaChi: string;
-    email: string;
-    sdt: string;
-}
-
 interface AlertState {
     show: boolean;
     type: 'success' | 'error' | 'warning' | 'info';
     title: string;
     message: string;
 }
-
-// Gender options
-const genderOptions: SelectOption[] = [
-    { value: 'NAM', label: 'Nam' },
-    { value: 'NU', label: 'Nữ' },
-    { value: 'KHONG_XAC_DINH', label: 'Không rõ' }
-];
 
 // Tình trạng mapping
 const tinhTrangMapping: Record<string, { label: string; color: string }> = {
@@ -128,22 +109,9 @@ const UserProfileInfo: React.FC = () => {
     const router = useRouter();
 
     // Modal states
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
     const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
-
-    // Form states
-    const [editFormData, setEditFormData] = useState<UpdateProfileData>({
-        hoTen: '',
-        ngaySinh: '',
-        gioiTinh: '',
-        diaChi: '',
-        email: '',
-        sdt: ''
-    });
-    const [isUpdating, setIsUpdating] = useState(false);
-    const [editError, setEditError] = useState<string | null>(null);
 
     // Password states
     const [passwordData, setPasswordData] = useState({
@@ -227,73 +195,6 @@ const UserProfileInfo: React.FC = () => {
     useEffect(() => {
         fetchProfile();
     }, []);
-
-    // Open edit modal
-    const handleOpenEditModal = () => {
-        if (profile) {
-            setEditFormData({
-                hoTen: profile.hoTen,
-                ngaySinh: profile.ngaySinh,
-                gioiTinh: profile.gioiTinh,
-                diaChi: profile.diaChi,
-                email: profile.email,
-                sdt: profile.sdt
-            });
-            setEditError(null);
-            setIsEditModalOpen(true);
-        }
-    };
-
-    // Handle update profile
-    const handleUpdateProfile = async () => {
-        try {
-            setIsUpdating(true);
-            setEditError(null);
-
-            const token = getCookie('access_token');
-            if (!token) {
-                router.push('/login');
-                return;
-            }
-
-            // 🔥 Trim mọi field trước khi gửi lên API
-            const cleanedData = {
-                hoTen: editFormData.hoTen.trim(),
-                ngaySinh: editFormData.ngaySinh.trim(),
-                gioiTinh: editFormData.gioiTinh.trim(),
-                diaChi: editFormData.diaChi.trim(),
-                email: editFormData.email.trim(),
-                sdt: editFormData.sdt.trim(),
-            };
-
-            const response = await fetch('http://localhost:3000/sinh-vien/me/my-profile', {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(cleanedData)
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Cập nhật thất bại');
-            }
-
-            // Close modal first
-            setIsEditModalOpen(false);
-
-            // Refresh profile
-            await fetchProfile();
-
-            // Show success alert
-            showAlert('success', 'Thành công! ', 'Thông tin cá nhân đã được cập nhật thành công.');
-        } catch (err) {
-            setEditError(err instanceof Error ? err.message : 'Đã xảy ra lỗi');
-        } finally {
-            setIsUpdating(false);
-        }
-    };
 
     // Open password modal
     const handleOpenPasswordModal = () => {
@@ -541,13 +442,6 @@ const UserProfileInfo: React.FC = () => {
                 <div className="flex flex-wrap gap-3 mb-6">
                     <Button
                         variant="primary"
-                        leftIcon={faEdit}
-                        onClick={handleOpenEditModal}
-                    >
-                        Thay đổi thông tin
-                    </Button>
-                    <Button
-                        variant="outline"
                         leftIcon={faKey}
                         onClick={handleOpenPasswordModal}
                     >
@@ -663,98 +557,6 @@ const UserProfileInfo: React.FC = () => {
                         </div>
                     </div>
                 </div>
-
-                {/* Edit Profile Modal */}
-                <Modal
-                    isOpen={isEditModalOpen}
-                    onClose={() => setIsEditModalOpen(false)}
-                    title="Thay đổi thông tin cá nhân"
-                    description="Cập nhật thông tin cá nhân của bạn"
-                    icon={faEdit}
-                    iconColor="bg-red-100 text-red-700"
-                    size="lg"
-                    footer={
-                        <div className="flex justify-end gap-3">
-                            <Button
-                                variant="secondary"
-                                onClick={() => setIsEditModalOpen(false)}
-                                disabled={isUpdating}
-                            >
-                                Hủy
-                            </Button>
-                            <Button
-                                variant="primary"
-                                leftIcon={faSave}
-                                onClick={handleUpdateProfile}
-                                isLoading={isUpdating}
-                            >
-                                Lưu thay đổi
-                            </Button>
-                        </div>
-                    }
-                >
-                    <div className="space-y-4">
-                        {editError && (
-                            <Alert type="error" message={editError} />
-                        )}
-
-                        <Input
-                            label="Họ và tên"
-                            value={editFormData.hoTen}
-                            onChange={(e) => setEditFormData({ ...editFormData, hoTen: e.target.value })}
-                            leftIcon={faUser}
-                            required
-                            fullWidth
-                        />
-
-                        <Input
-                            label="Ngày sinh"
-                            type="date"
-                            value={editFormData.ngaySinh}
-                            onChange={(e) => setEditFormData({ ...editFormData, ngaySinh: e.target.value })}
-                            leftIcon={faCalendarAlt}
-                            required
-                            fullWidth
-                        />
-
-                        <Select
-                            label="Giới tính"
-                            options={genderOptions}
-                            value={editFormData.gioiTinh}
-                            onChange={(v) => setEditFormData({ ...editFormData, gioiTinh: v as string })}
-                            required
-                            fullWidth
-                        />
-
-                        <Input
-                            label="Địa chỉ"
-                            value={editFormData.diaChi}
-                            onChange={(e) => setEditFormData({ ...editFormData, diaChi: e.target.value })}
-                            leftIcon={faMapMarkerAlt}
-                            required
-                            fullWidth
-                        />
-
-                        <Input
-                            label="Email"
-                            type="email"
-                            value={editFormData.email}
-                            onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
-                            leftIcon={faEnvelope}
-                            required
-                            fullWidth
-                        />
-
-                        <Input
-                            label="Số điện thoại"
-                            value={editFormData.sdt}
-                            onChange={(e) => setEditFormData({ ...editFormData, sdt: e.target.value })}
-                            leftIcon={faPhone}
-                            required
-                            fullWidth
-                        />
-                    </div>
-                </Modal>
 
                 {/* Change Password Modal */}
                 <Modal

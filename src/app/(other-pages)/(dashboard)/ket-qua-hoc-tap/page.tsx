@@ -10,10 +10,6 @@ export const metadata: Metadata = {
 export default function KetQuaHocTap() {
     return (
         <>
-        <div className="pb-8"></div>
-        <div className="pb-8"></div>
-        <div className="pb-8"></div>
-        <div className="pb-3"></div>
             <KetQuaHocTapPage />
         </>
     );

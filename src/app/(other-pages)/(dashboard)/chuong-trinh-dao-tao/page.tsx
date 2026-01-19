@@ -9,10 +9,6 @@ export const metadata: Metadata = {
 export default function ChuongTrinhDaoTao() {
     return (
         <>
-        <div className="pb-8"></div>
-        <div className="pb-8"></div>
-        <div className="pb-8"></div>
-        <div className="pb-2"></div>
             <ChuongTrinhDaoTaoPage />
         </>
     );

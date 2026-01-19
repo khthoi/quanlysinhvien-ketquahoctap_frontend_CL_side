@@ -189,7 +189,7 @@ const DashboardPage: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
     const router = useRouter();
-    
+
     // Get cookie helper
     const getCookie = (name: string): string | null => {
         if (typeof document === 'undefined') return null;
@@ -367,12 +367,6 @@ const DashboardPage: React.FC = () => {
 
     return (
         <>
-            <div className='pt-5'></div>
-            <div className='pt-5'></div>
-            <div className='pt-5'></div>
-            <div className='pt-5'></div>
-            <div className='pt-5'></div>
-            <div className='pt-4'></div>
             <div className="min-h-screen bg-gray-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                     {/* Header */}

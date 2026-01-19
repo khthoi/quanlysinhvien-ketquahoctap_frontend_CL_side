@@ -8,7 +8,10 @@ export default function OtherPagesLayout({
     return (
         <>
             <AppSidebar />
-            <main>
+            <main className="pt-8 bg-white dark:bg-white">
+                <div className="pt-8"></div>
+                <div className="pt-8"></div>
+                <div className="pt-5"></div>
                 {children}
             </main>
         </>

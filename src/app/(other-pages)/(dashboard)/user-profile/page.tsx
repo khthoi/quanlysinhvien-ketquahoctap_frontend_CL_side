@@ -10,12 +10,6 @@ export const metadata: Metadata = {
 export default function UserProfilePage() {
     return (
         <>
-            <div className="pt-5"></div>
-            <div className="pt-5"></div>
-            <div className="pt-5"></div>
-            <div className="pt-5"></div>
-            <div className="pt-5"></div>
-            <div className="pt-5"></div>
             <UserProfileInfo />
         </>
     );
