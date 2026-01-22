@@ -46,7 +46,7 @@ interface NamHoc {
 }
 
 interface HocKy {
-  id:  number;
+  id: number;
   hocKy: number;
   ngayBatDau: string;
   ngayKetThuc: string;
@@ -56,7 +56,7 @@ interface HocKy {
 interface NienKhoa {
   id: number;
   maNienKhoa: string;
-  tenNienKhoa:  string;
+  tenNienKhoa: string;
   namBatDau: number;
   namKetThuc: number;
   moTa: string;
@@ -64,14 +64,14 @@ interface NienKhoa {
 
 interface Nganh {
   id: number;
-  maNganh:  string;
+  maNganh: string;
   tenNganh: string;
   moTa: string;
 }
 
 interface MonHoc {
   id: number;
-  tenMonHoc:  string;
+  tenMonHoc: string;
   maMonHoc: string;
   loaiMon: string;
   soTinChi: number;
@@ -96,9 +96,9 @@ interface LopHocPhan {
 interface KetQuaHocTap {
   id: number;
   lopHocPhan: LopHocPhan;
-  diemQuaTrinh: string;
-  diemThanhPhan: string;
-  diemThi: string;
+  diemQuaTrinh: number;
+  diemThanhPhan: number;
+  diemThi: number;
   TBCHP: number;
   DiemSo: number;
   DiemChu: string;
@@ -111,9 +111,17 @@ interface KhenThuongKyLuat {
   ngayQuyetDinh: string;
 }
 
+interface ThongKe {
+  soMonHoanThanh: number;
+  soKetQuaHocTap: number;
+  gpa: number;
+  xepLoaiHocLuc: string;
+}
+
 interface ApiResponse {
   ketQuaHocTap: KetQuaHocTap[];
   khenThuongKyLuat: KhenThuongKyLuat[];
+  thongKe: ThongKe;
 }
 
 interface AlertState {
@@ -125,7 +133,7 @@ interface AlertState {
 // ==================== CONSTANTS ====================
 
 const loaiMonMapping: Record<string, { label: string; color: string }> = {
-  CHUYEN_NGANH:  { label: 'Chuyên ngành', color: 'bg-red-100 text-red-700' },
+  CHUYEN_NGANH: { label: 'Chuyên ngành', color: 'bg-red-100 text-red-700' },
   DAI_CUONG: { label: 'Đại cương', color: 'bg-blue-100 text-blue-700' },
   CO_SO: { label: 'Cơ sở', color: 'bg-green-100 text-green-700' },
   TU_CHON: { label: 'Tự chọn', color: 'bg-purple-100 text-purple-700' }
@@ -133,7 +141,7 @@ const loaiMonMapping: Record<string, { label: string; color: string }> = {
 
 const diemChuColors: Record<string, string> = {
   'A+': 'bg-green-500 text-white',
-  'A':  'bg-green-500 text-white',
+  'A': 'bg-green-500 text-white',
   'B+': 'bg-blue-500 text-white',
   'B': 'bg-blue-500 text-white',
   'C+': 'bg-yellow-500 text-white',
@@ -151,10 +159,11 @@ const loaiKTKLOptions: SearchableSelectOption[] = [
 
 // ==================== MAIN COMPONENT ====================
 
-const KetQuaHocTapPage:  React.FC = () => {
+const KetQuaHocTapPage: React.FC = () => {
   // Data states
   const [ketQuaHocTap, setKetQuaHocTap] = useState<KetQuaHocTap[]>([]);
   const [khenThuongKyLuat, setKhenThuongKyLuat] = useState<KhenThuongKyLuat[]>([]);
+  const [thongKe, setThongKe] = useState<ThongKe | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   // Modal states
@@ -177,7 +186,7 @@ const KetQuaHocTapPage:  React.FC = () => {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
     if (parts.length === 2) {
-      return parts. pop()?.split(';').shift() || null;
+      return parts.pop()?.split(';').shift() || null;
     }
     return null;
   };
@@ -186,7 +195,7 @@ const KetQuaHocTapPage:  React.FC = () => {
     const date = new Date(dateString);
     return date.toLocaleDateString('vi-VN', {
       day: '2-digit',
-      month:  '2-digit',
+      month: '2-digit',
       year: 'numeric'
     });
   };
@@ -201,7 +210,7 @@ const KetQuaHocTapPage:  React.FC = () => {
     try {
       setIsLoading(true);
       const token = getCookie('access_token');
-      
+
       if (!token) {
         router.push('/login');
         return;
@@ -219,9 +228,10 @@ const KetQuaHocTapPage:  React.FC = () => {
         throw new Error('Không thể tải kết quả học tập');
       }
 
-      const result:  ApiResponse = await response.json();
+      const result: ApiResponse = await response.json();
       setKetQuaHocTap(result.ketQuaHocTap || []);
       setKhenThuongKyLuat(result.khenThuongKyLuat || []);
+      setThongKe(result.thongKe || null);
     } catch (err) {
       showAlert('error', err instanceof Error ? err.message : 'Đã xảy ra lỗi');
     } finally {
@@ -239,30 +249,21 @@ const KetQuaHocTapPage:  React.FC = () => {
 
   // Statistics
   const statistics = useMemo(() => {
-    if (ketQuaHocTap. length === 0) {
-      return {
-        totalMonHoc: 0,
-        totalTinChi: 0,
-        avgDiemSo: 0,
-        avgTBCHP: 0,
-        khenThuong: 0,
-        kyLuat: 0
-      };
-    }
-
     const totalTinChi = ketQuaHocTap.reduce((sum, kq) => sum + kq.lopHocPhan.monHoc.soTinChi, 0);
-    const totalDiemSo = ketQuaHocTap.reduce((sum, kq) => sum + kq.DiemSo, 0);
-    const totalTBCHP = ketQuaHocTap.reduce((sum, kq) => sum + kq.TBCHP, 0);
+    const totalTBCHP = ketQuaHocTap.length > 0
+      ? ketQuaHocTap.reduce((sum, kq) => sum + kq.TBCHP, 0) / ketQuaHocTap.length
+      : 0;
 
     return {
-      totalMonHoc: ketQuaHocTap.length,
+      totalMonHoc: thongKe?.soMonHoanThanh || ketQuaHocTap.length,
       totalTinChi,
-      avgDiemSo: (totalDiemSo / ketQuaHocTap.length).toFixed(2),
-      avgTBCHP: (totalTBCHP / ketQuaHocTap. length).toFixed(2),
+      avgDiemSo: thongKe?.gpa?.toFixed(2) || '0.00',
+      avgTBCHP: totalTBCHP.toFixed(2),
+      xepLoaiHocLuc: thongKe?.xepLoaiHocLuc || 'Chưa xác định',
       khenThuong: khenThuongKyLuat.filter(k => k.loai === 'KHEN_THUONG').length,
-      kyLuat:  khenThuongKyLuat.filter(k => k. loai === 'KY_LUAT').length
+      kyLuat: khenThuongKyLuat.filter(k => k.loai === 'KY_LUAT').length
     };
-  }, [ketQuaHocTap, khenThuongKyLuat]);
+  }, [ketQuaHocTap, khenThuongKyLuat, thongKe]);
 
   // Filtered KTKL
   const filteredKTKL = useMemo(() => {
@@ -312,17 +313,17 @@ const KetQuaHocTapPage:  React.FC = () => {
       align: 'center' as const,
       render: (_: any, row: KetQuaHocTap) => (
         <span className="inline-flex items-center justify-center w-7 h-7 bg-gray-100 text-gray-700 rounded-lg font-semibold text-sm">
-          {row.lopHocPhan.monHoc. soTinChi}
+          {row.lopHocPhan.monHoc.soTinChi}
         </span>
       )
     },
     {
-      key:  'diemQuaTrinh',
+      key: 'diemQuaTrinh',
       header: 'ĐQT',
       width: '70px',
       align: 'center' as const,
-      render: (value: string) => (
-        <span className="font-medium text-gray-900">{parseFloat(value).toFixed(1)}</span>
+      render: (value: number) => (
+        <span className="font-medium text-gray-900">{value.toFixed(1)}</span>
       )
     },
     {
@@ -330,8 +331,8 @@ const KetQuaHocTapPage:  React.FC = () => {
       header: 'ĐThi',
       width: '70px',
       align: 'center' as const,
-      render:  (value: string) => (
-        <span className="font-medium text-gray-900">{parseFloat(value).toFixed(1)}</span>
+      render: (value: number) => (
+        <span className="font-medium text-gray-900">{value.toFixed(1)}</span>
       )
     },
     {
@@ -340,15 +341,15 @@ const KetQuaHocTapPage:  React.FC = () => {
       width: '80px',
       align: 'center' as const,
       render: (value: number) => (
-        <span className="font-bold text-gray-900">{value. toFixed(1)}</span>
+        <span className="font-bold text-gray-900">{value.toFixed(1)}</span>
       )
     },
     {
       key: 'DiemSo',
-      header:  'Điểm số',
+      header: 'Điểm số',
       width: '110px',
       align: 'center' as const,
-      render:  (value: number) => (
+      render: (value: number) => (
         <span className="font-bold text-red-700">{value.toFixed(1)}</span>
       )
     },
@@ -365,7 +366,7 @@ const KetQuaHocTapPage:  React.FC = () => {
     },
     {
       key: 'hocKy',
-      header:  'Học kỳ',
+      header: 'Học kỳ',
       width: '120px',
       render: (_: any, row: KetQuaHocTap) => (
         <div className="text-sm">
@@ -377,7 +378,7 @@ const KetQuaHocTapPage:  React.FC = () => {
     {
       key: 'actions',
       header: 'Hành động',
-      width:  '140px',
+      width: '140px',
       align: 'center' as const,
       render: (_: any, row: KetQuaHocTap) => (
         <Button
@@ -401,11 +402,10 @@ const KetQuaHocTapPage:  React.FC = () => {
       render: (value: string) => {
         const isKhenThuong = value === 'KHEN_THUONG';
         return (
-          <span className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium ${
-            isKhenThuong 
-              ? 'bg-green-100 text-green-700' 
-              : 'bg-red-100 text-red-700'
-          }`}>
+          <span className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium ${isKhenThuong
+            ? 'bg-green-100 text-green-700'
+            : 'bg-red-100 text-red-700'
+            }`}>
             <FontAwesomeIcon icon={isKhenThuong ? faTrophy : faGavel} className="text-xs" />
             {isKhenThuong ? 'Khen thưởng' : 'Kỷ luật'}
           </span>
@@ -413,7 +413,7 @@ const KetQuaHocTapPage:  React.FC = () => {
       }
     },
     {
-      key:  'noiDung',
+      key: 'noiDung',
       header: 'Nội dung',
       render: (value: string) => (
         <p className="text-gray-900">{value}</p>
@@ -452,14 +452,14 @@ const KetQuaHocTapPage:  React.FC = () => {
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm: px-6 lg:px-8">
         {/* Alert */}
-        {alertState. show && (
+        {alertState.show && (
           <div className="mb-6">
             <Alert
               type={alertState.type}
               message={alertState.message}
               dismissible
               timeout={5000}
-              onDismiss={() => setAlertState({ ... alertState, show: false })}
+              onDismiss={() => setAlertState({ ...alertState, show: false })}
             />
           </div>
         )}
@@ -541,7 +541,7 @@ const KetQuaHocTapPage:  React.FC = () => {
                 <p className="text-gray-500">Kết quả tích lũy toàn khóa</p>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-8">
               <div className="text-center">
                 <p className="text-4xl font-bold text-red-700">{statistics.avgDiemSo}</p>
@@ -556,6 +556,11 @@ const KetQuaHocTapPage:  React.FC = () => {
               <div className="text-center">
                 <p className="text-4xl font-bold text-blue-700">{statistics.totalTinChi}</p>
                 <p className="text-sm text-gray-500">Tín chỉ</p>
+              </div>
+              <div className="h-16 w-px bg-gray-200"></div>
+              <div className="text-center">
+                <p className="text-2xl font-bold text-emerald-600">{statistics.xepLoaiHocLuc}</p>
+                <p className="text-sm text-gray-500">Xếp loại</p>
               </div>
             </div>
           </div>
@@ -590,7 +595,7 @@ const KetQuaHocTapPage:  React.FC = () => {
               </h3>
             </div>
           </div>
-          
+
           <Table
             columns={ketQuaColumns}
             data={ketQuaHocTap}
@@ -626,15 +631,14 @@ const KetQuaHocTapPage:  React.FC = () => {
                   </div>
                   <div className="flex-1">
                     <h3 className="text-lg font-bold text-gray-900">
-                      {selectedKetQua. lopHocPhan.monHoc.tenMonHoc}
+                      {selectedKetQua.lopHocPhan.monHoc.tenMonHoc}
                     </h3>
                     <p className="text-sm text-gray-500 font-mono">
                       {selectedKetQua.lopHocPhan.maLopHocPhan}
                     </p>
                     <div className="flex flex-wrap gap-2 mt-2">
-                      <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-medium ${
-                        loaiMonMapping[selectedKetQua.lopHocPhan.monHoc.loaiMon]?. color || 'bg-gray-100 text-gray-700'
-                      }`}>
+                      <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-medium ${loaiMonMapping[selectedKetQua.lopHocPhan.monHoc.loaiMon]?.color || 'bg-gray-100 text-gray-700'
+                        }`}>
                         {loaiMonMapping[selectedKetQua.lopHocPhan.monHoc.loaiMon]?.label || selectedKetQua.lopHocPhan.monHoc.loaiMon}
                       </span>
                       <span className="inline-flex px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
@@ -642,9 +646,8 @@ const KetQuaHocTapPage:  React.FC = () => {
                       </span>
                     </div>
                   </div>
-                  <div className={`w-16 h-16 rounded-2xl flex items-center justify-center ${
-                    diemChuColors[selectedKetQua.DiemChu] || 'bg-gray-100 text-gray-700'
-                  }`}>
+                  <div className={`w-16 h-16 rounded-2xl flex items-center justify-center ${diemChuColors[selectedKetQua.DiemChu] || 'bg-gray-100 text-gray-700'
+                    }`}>
                     <span className="text-2xl font-bold">{selectedKetQua.DiemChu}</span>
                   </div>
                 </div>
@@ -657,10 +660,10 @@ const KetQuaHocTapPage:  React.FC = () => {
                   Điểm số chi tiết
                 </h4>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <ScoreCard label="Điểm quá trình" value={parseFloat(selectedKetQua. diemQuaTrinh).toFixed(1)} />
-                  <ScoreCard label="Điểm thành phần" value={parseFloat(selectedKetQua.diemThanhPhan).toFixed(1)} />
-                  <ScoreCard label="Điểm thi" value={parseFloat(selectedKetQua.diemThi).toFixed(1)} />
-                  <ScoreCard label="TB học phần" value={selectedKetQua. TBCHP. toFixed(1)} highlight />
+                  <ScoreCard label="Điểm quá trình" value={selectedKetQua.diemQuaTrinh.toFixed(1)} />
+                  <ScoreCard label="Điểm thành phần" value={selectedKetQua.diemThanhPhan.toFixed(1)} />
+                  <ScoreCard label="Điểm thi" value={selectedKetQua.diemThi.toFixed(1)} />
+                  <ScoreCard label="TB học phần" value={selectedKetQua.TBCHP.toFixed(1)} highlight />
                 </div>
               </div>
 
@@ -668,11 +671,11 @@ const KetQuaHocTapPage:  React.FC = () => {
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="bg-red-50 rounded-xl p-4 text-center">
                   <p className="text-sm text-red-600 mb-1">Điểm hệ 4</p>
-                  <p className="text-3xl font-bold text-red-700">{selectedKetQua.DiemSo. toFixed(1)}</p>
+                  <p className="text-3xl font-bold text-red-700">{selectedKetQua.DiemSo.toFixed(1)}</p>
                 </div>
                 <div className="bg-gray-50 rounded-xl p-4 text-center">
                   <p className="text-sm text-gray-600 mb-1">Điểm chữ</p>
-                  <p className="text-3xl font-bold text-gray-900">{selectedKetQua. DiemChu}</p>
+                  <p className="text-3xl font-bold text-gray-900">{selectedKetQua.DiemChu}</p>
                 </div>
               </div>
 
@@ -684,8 +687,8 @@ const KetQuaHocTapPage:  React.FC = () => {
                     Thông tin giảng dạy
                   </h4>
                   <div className="space-y-2">
-                    <DetailRow label="Giảng viên" value={selectedKetQua.lopHocPhan.giangVien. hoTen} />
-                    <DetailRow label="Học kỳ" value={`HK${selectedKetQua.lopHocPhan.hocKy. hocKy} - ${selectedKetQua. lopHocPhan.namHoc. tenNamHoc}`} />
+                    <DetailRow label="Giảng viên" value={selectedKetQua.lopHocPhan.giangVien.hoTen} />
+                    <DetailRow label="Học kỳ" value={`HK${selectedKetQua.lopHocPhan.hocKy.hocKy} - ${selectedKetQua.lopHocPhan.namHoc.tenNamHoc}`} />
                     <DetailRow label="Niên khóa" value={selectedKetQua.lopHocPhan.nienKhoa.tenNienKhoa} />
                   </div>
                 </div>
@@ -696,7 +699,7 @@ const KetQuaHocTapPage:  React.FC = () => {
                   </h4>
                   <div className="space-y-2">
                     <DetailRow label="Mã môn" value={selectedKetQua.lopHocPhan.monHoc.maMonHoc} />
-                    <DetailRow label="Ngành" value={selectedKetQua.lopHocPhan. nganh.tenNganh} />
+                    <DetailRow label="Ngành" value={selectedKetQua.lopHocPhan.nganh.tenNganh} />
                     <DetailRow label="Mô tả" value={selectedKetQua.lopHocPhan.monHoc.moTa} />
                   </div>
                 </div>
@@ -738,7 +741,7 @@ const KetQuaHocTapPage:  React.FC = () => {
                   <FontAwesomeIcon icon={faGavel} className="text-xl text-red-700" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-red-700">{statistics. kyLuat}</p>
+                  <p className="text-2xl font-bold text-red-700">{statistics.kyLuat}</p>
                   <p className="text-sm text-red-600">Kỷ luật</p>
                 </div>
               </div>
@@ -774,7 +777,7 @@ const KetQuaHocTapPage:  React.FC = () => {
 // ==================== SUB COMPONENTS ====================
 
 interface StatCardProps {
-  icon:  any;
+  icon: any;
   label: string;
   value: number | string;
   color: string;
@@ -803,15 +806,15 @@ interface ScoreCardProps {
   highlight?: boolean;
 }
 
-const ScoreCard: React. FC<ScoreCardProps> = ({ label, value, highlight }) => (
+const ScoreCard: React.FC<ScoreCardProps> = ({ label, value, highlight }) => (
   <div className={`rounded-xl p-4 text-center ${highlight ? 'bg-red-50' : 'bg-gray-50'}`}>
     <p className={`text-sm mb-1 ${highlight ? 'text-red-600' : 'text-gray-500'}`}>{label}</p>
-    <p className={`text-2xl font-bold ${highlight ? 'text-red-700' :  'text-gray-900'}`}>{value}</p>
+    <p className={`text-2xl font-bold ${highlight ? 'text-red-700' : 'text-gray-900'}`}>{value}</p>
   </div>
 );
 
 interface DetailRowProps {
-  label:  string;
+  label: string;
   value: string;
 }
 
