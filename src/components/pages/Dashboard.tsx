@@ -215,7 +215,7 @@ const DashboardPage: React.FC = () => {
                 return;
             }
 
-            const response = await fetch('${ENV.BACKEND_URL}/bao-cao/thong-ke/tong-quan', {
+            const response = await fetch(`${ENV.BACKEND_URL}/bao-cao/thong-ke/tong-quan`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,

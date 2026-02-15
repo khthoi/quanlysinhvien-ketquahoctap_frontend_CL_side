@@ -313,7 +313,7 @@ const DangKyHocPage: React.FC = () => {
       const token = getCookie('access_token');
       if (!token) return;
 
-      const response = await fetch('${ENV.BACKEND_URL}/ket-qua/sinh-vien/me', {
+      const response = await fetch(`${ENV.BACKEND_URL}/ket-qua/sinh-vien/me`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -335,7 +335,7 @@ const DangKyHocPage: React.FC = () => {
       const token = getCookie('access_token');
       if (!token) return;
 
-      const response = await fetch('${ENV.BACKEND_URL}/dao-tao/chuong-trinh/tat-ca-mon-hoc/me', {
+      const response = await fetch(`${ENV.BACKEND_URL}/dao-tao/chuong-trinh/tat-ca-mon-hoc/me`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -539,7 +539,7 @@ const DangKyHocPage: React.FC = () => {
         return;
       }
 
-      const response = await fetch('${ENV.BACKEND_URL}/sinh-vien/yeu-cau-dang-ky/me', {
+      const response = await fetch(`${ENV.BACKEND_URL}/sinh-vien/yeu-cau-dang-ky/me`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -615,7 +615,7 @@ const DangKyHocPage: React.FC = () => {
         lyDo: formData.lyDo.trim()
       };
 
-      const response = await fetch('${ENV.BACKEND_URL}/sinh-vien/yeu-cau-hoc-phan/me', {
+      const response = await fetch(`${ENV.BACKEND_URL}/sinh-vien/yeu-cau-hoc-phan/me`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,

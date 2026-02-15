@@ -154,7 +154,7 @@ const ChuongTrinhDaoTaoPage: React.FC = () => {
                 return;
             }
 
-            const response = await fetch('${ENV.BACKEND_URL}/dao-tao/chuong-trinh/tat-ca-mon-hoc/me', {
+            const response = await fetch(`${ENV.BACKEND_URL}/dao-tao/chuong-trinh/tat-ca-mon-hoc/me`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,

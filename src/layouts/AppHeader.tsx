@@ -182,7 +182,7 @@ const AppHeader: React.FC = () => {
 
       // Fetch thông tin sinh viên
       try {
-        const response = await fetch('${ENV.BACKEND_URL}/sinh-vien/me/my-profile', {
+        const response = await fetch(`${ENV.BACKEND_URL}/sinh-vien/me/my-profile`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${accessToken}`,
