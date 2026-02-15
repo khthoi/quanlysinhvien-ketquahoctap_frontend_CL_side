@@ -35,6 +35,7 @@ import {
 import Alert from '@/components/ui/Alert';
 import Button from '@/components/ui/Button';
 import { useRouter } from 'next/navigation';
+import { saveRedirectUrl } from '@/utils/auth';
 
 // Interfaces
 interface ThongKeTongQuan {
@@ -211,6 +212,8 @@ const DashboardPage: React.FC = () => {
             const token = getCookie('access_token');
 
             if (!token) {
+                const pathname = window.location.pathname;
+                if (pathname) saveRedirectUrl(pathname);
                 router.push('/login');
                 return;
             }

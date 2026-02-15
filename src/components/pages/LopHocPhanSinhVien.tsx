@@ -33,7 +33,8 @@ import Modal from '@/components/ui/Modal';
 import Alert from '@/components/ui/Alert';
 import SearchableSelect, { SearchableSelectOption } from '@/components/ui/SearchableSelect';
 import { width } from '@fortawesome/free-brands-svg-icons/fa11ty';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
+import { saveRedirectUrl } from '@/utils/auth';
 
 // ==================== INTERFACES =====================//
 
@@ -193,6 +194,8 @@ const LopHocPhanPage: React.FC = () => {
     try {
       const token = getCookie('access_token');
       if (!token) {
+        const pathname = window.location.pathname;
+        if (pathname) saveRedirectUrl(pathname);
         router.push('/login');
         return;
       }

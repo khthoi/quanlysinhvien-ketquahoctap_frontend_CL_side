@@ -28,7 +28,8 @@ import {
   faYoutube,
   faTiktok
 } from '@fortawesome/free-brands-svg-icons';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
+import { saveRedirectUrl } from '@/utils/auth';
 
 // Interface cho thông tin sinh viên
 interface SinhVienProfile {
@@ -85,6 +86,7 @@ const AppHeader: React.FC = () => {
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
   // Auth states
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -132,6 +134,8 @@ const AppHeader: React.FC = () => {
     deleteCookie('access_token');
     setIsAuthenticated(false);
     setUserProfile(null);
+    // Lưu đường dẫn hiện tại trước khi redirect
+    if (pathname) saveRedirectUrl(pathname);
     router.push('/login');
   };
 
@@ -141,6 +145,7 @@ const AppHeader: React.FC = () => {
     setIsAuthenticated(false);
     setUserProfile(null);
     setIsDropdownOpen(false);
+    // Không lưu redirect URL khi logout thủ công
     router.push('/login');
   };
 

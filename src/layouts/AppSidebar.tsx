@@ -36,6 +36,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { useRouter, usePathname } from 'next/navigation';
 import { useSidebar } from '@/contexts/SidebarContext';
+import { saveRedirectUrl } from '@/utils/auth';
 
 // Interface cho thông tin sinh viên
 interface SinhVienProfile {
@@ -148,6 +149,8 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ defaultCollapsed = false }) => 
     const redirectToLogin = () => {
         deleteCookie('access_token');
         setUserProfile(null);
+        // Lưu đường dẫn hiện tại trước khi redirect
+        if (pathname) saveRedirectUrl(pathname);
         router.push('/login');
     };
 
@@ -537,6 +540,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ defaultCollapsed = false }) => 
                         // Handle logout
                         deleteCookie('access_token');
                         setUserProfile(null);
+                        // Không lưu redirect URL khi logout thủ công
                         router.push('/login');
                     }}
                     className={`

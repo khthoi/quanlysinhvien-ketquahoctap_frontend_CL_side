@@ -29,7 +29,8 @@ import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Modal from '@/components/ui/Modal';
 import Alert from '@/components/ui/Alert';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
+import { saveRedirectUrl } from '@/utils/auth';
 
 // Interfaces
 interface Khoa {
@@ -108,6 +109,7 @@ const UserProfileInfo: React.FC = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const router = useRouter();
+    const pathname = usePathname();
 
     // Modal states
     const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
@@ -242,6 +244,7 @@ const UserProfileInfo: React.FC = () => {
 
             const token = getCookie('access_token');
             if (!token) {
+                if (pathname) saveRedirectUrl(pathname);
                 router.push('/login');
                 return;
             }
@@ -328,6 +331,7 @@ const UserProfileInfo: React.FC = () => {
 
             const token = getCookie('access_token');
             if (!token) {
+                if (pathname) saveRedirectUrl(pathname);
                 router.push('/login');
                 return;
             }
@@ -366,6 +370,7 @@ const UserProfileInfo: React.FC = () => {
             return () => clearTimeout(timer);
         } else if (isLogoutModalOpen && logoutCountdown === 0) {
             deleteCookie('access_token');
+            // Không lưu redirect URL khi logout thủ công
             router.push('/login');
         }
     }, [isLogoutModalOpen, logoutCountdown]);

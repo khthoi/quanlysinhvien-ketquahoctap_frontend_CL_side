@@ -34,6 +34,7 @@ import Modal from '@/components/ui/Modal';
 import Alert from '@/components/ui/Alert';
 import SearchableSelect, { SearchableSelectOption } from '@/components/ui/SearchableSelect';
 import { useRouter } from 'next/navigation';
+import { saveRedirectUrl } from '@/utils/auth';
 
 // ==================== INTERFACES ====================
 
@@ -360,6 +361,8 @@ const DangKyHocPage: React.FC = () => {
       const token = getCookie('access_token');
 
       if (!token) {
+        const pathname = window.location.pathname;
+        if (pathname) saveRedirectUrl(pathname);
         router.push('/login');
         return;
       }
@@ -535,6 +538,8 @@ const DangKyHocPage: React.FC = () => {
     try {
       const token = getCookie('access_token');
       if (!token) {
+        const pathname = window.location.pathname;
+        if (pathname) saveRedirectUrl(pathname);
         router.push('/login');
         return;
       }
@@ -604,6 +609,8 @@ const DangKyHocPage: React.FC = () => {
     try {
       const token = getCookie('access_token');
       if (!token) {
+        const pathname = window.location.pathname;
+        if (pathname) saveRedirectUrl(pathname);
         router.push('/login');
         return;
       }

@@ -22,6 +22,7 @@ import {
     faAward
 } from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from 'next/navigation';
+import { getAndClearRedirectUrl } from '@/utils/auth';
 
 interface LoginFormData {
     tenDangNhap: string;
@@ -117,7 +118,9 @@ const LoginPage: React.FC = () => {
                 if (decoded && decoded.vaiTro === 'SINH_VIEN') {
                     // Là sinh viên → lưu cookie và redirect
                     setCookie('access_token', data.access_token, rememberMe ? 30 : 7);
-                    router.push("/");
+                    // Chuyển hướng về URL đã lưu hoặc trang chủ
+                    const redirectUrl = getAndClearRedirectUrl("/");
+                    router.push(redirectUrl);
                 } else {
                     // Không phải sinh viên → xóa token (nếu có), hiển thị lỗi
                     deleteCookie('access_token');
