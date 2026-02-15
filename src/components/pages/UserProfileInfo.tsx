@@ -1,5 +1,6 @@
 'use client';
 
+import { ENV } from "@/config/env";
 import React, { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -171,7 +172,7 @@ const UserProfileInfo: React.FC = () => {
                 return;
             }
 
-            const response = await fetch('http://localhost:3000/sinh-vien/me/my-profile', {
+            const response = await fetch('${ENV.BACKEND_URL}/sinh-vien/me/my-profile', {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -245,7 +246,7 @@ const UserProfileInfo: React.FC = () => {
                 return;
             }
 
-            const response = await fetch('http://localhost:3000/auth/change-password/me', {
+            const response = await fetch('${ENV.BACKEND_URL}/auth/change-password/me', {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -331,7 +332,7 @@ const UserProfileInfo: React.FC = () => {
                 return;
             }
 
-            const response = await fetch('http://localhost:3000/auth/change-password/verify-otp', {
+            const response = await fetch('${ENV.BACKEND_URL}/auth/change-password/verify-otp', {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,

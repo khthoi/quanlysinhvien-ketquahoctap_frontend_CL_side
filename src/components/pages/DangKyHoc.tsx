@@ -1,5 +1,6 @@
 'use client';
 
+import { ENV } from "@/config/env";
 import React, { useState, useEffect, useMemo } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -312,7 +313,7 @@ const DangKyHocPage: React.FC = () => {
       const token = getCookie('access_token');
       if (!token) return;
 
-      const response = await fetch('http://localhost:3000/ket-qua/sinh-vien/me', {
+      const response = await fetch('${ENV.BACKEND_URL}/ket-qua/sinh-vien/me', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -334,7 +335,7 @@ const DangKyHocPage: React.FC = () => {
       const token = getCookie('access_token');
       if (!token) return;
 
-      const response = await fetch('http://localhost:3000/dao-tao/chuong-trinh/tat-ca-mon-hoc/me', {
+      const response = await fetch('${ENV.BACKEND_URL}/dao-tao/chuong-trinh/tat-ca-mon-hoc/me', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -368,7 +369,7 @@ const DangKyHocPage: React.FC = () => {
         page: '1',
         limit: '9999' // Lấy tất cả để tính số đếm
       });
-      const allResponse = await fetch(`http://localhost:3000/sinh-vien/yeu-cau-dang-ky/me?${allParams.toString()}`, {
+      const allResponse = await fetch(`${ENV.BACKEND_URL}/sinh-vien/yeu-cau-dang-ky/me?${allParams.toString()}`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -391,7 +392,7 @@ const DangKyHocPage: React.FC = () => {
         params.append('trangThai', trangThai);
       }
 
-      const response = await fetch(`http://localhost:3000/sinh-vien/yeu-cau-dang-ky/me?${params.toString()}`, {
+      const response = await fetch(`${ENV.BACKEND_URL}/sinh-vien/yeu-cau-dang-ky/me?${params.toString()}`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -538,7 +539,7 @@ const DangKyHocPage: React.FC = () => {
         return;
       }
 
-      const response = await fetch('http://localhost:3000/sinh-vien/yeu-cau-dang-ky/me', {
+      const response = await fetch('${ENV.BACKEND_URL}/sinh-vien/yeu-cau-dang-ky/me', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -614,7 +615,7 @@ const DangKyHocPage: React.FC = () => {
         lyDo: formData.lyDo.trim()
       };
 
-      const response = await fetch('http://localhost:3000/sinh-vien/yeu-cau-hoc-phan/me', {
+      const response = await fetch('${ENV.BACKEND_URL}/sinh-vien/yeu-cau-hoc-phan/me', {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -649,7 +650,7 @@ const DangKyHocPage: React.FC = () => {
         return;
       }
 
-      const response = await fetch(`http://localhost:3000/sinh-vien/yeu-cau-hoc-phan/me/${selectedYeuCau.id}/huy`, {
+      const response = await fetch(`${ENV.BACKEND_URL}/sinh-vien/yeu-cau-hoc-phan/me/${selectedYeuCau.id}/huy`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -688,7 +689,7 @@ const DangKyHocPage: React.FC = () => {
         return;
       }
 
-      const response = await fetch(`http://localhost:3000/sinh-vien/yeu-cau-hoc-phan/me/${selectedYeuCau.id}`, {
+      const response = await fetch(`${ENV.BACKEND_URL}/sinh-vien/yeu-cau-hoc-phan/me/${selectedYeuCau.id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,

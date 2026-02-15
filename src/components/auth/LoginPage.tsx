@@ -1,5 +1,6 @@
 'use client';
 
+import { ENV } from "@/config/env";
 import React, { useState, FormEvent } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -93,7 +94,7 @@ const LoginPage: React.FC = () => {
         setError(null);
 
         try {
-            const response = await fetch('http://localhost:3000/auth/login', {
+            const response = await fetch('${ENV.BACKEND_URL}/auth/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

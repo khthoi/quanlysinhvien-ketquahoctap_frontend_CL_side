@@ -1,5 +1,6 @@
 'use client';
 
+import { ENV } from "@/config/env";
 import React, { useState, useEffect, useMemo } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -153,7 +154,7 @@ const ChuongTrinhDaoTaoPage: React.FC = () => {
                 return;
             }
 
-            const response = await fetch('http://localhost:3000/dao-tao/chuong-trinh/tat-ca-mon-hoc/me', {
+            const response = await fetch('${ENV.BACKEND_URL}/dao-tao/chuong-trinh/tat-ca-mon-hoc/me', {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,

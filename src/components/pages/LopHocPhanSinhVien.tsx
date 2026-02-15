@@ -1,5 +1,6 @@
 'use client';
 
+import { ENV } from "@/config/env";
 import React, { useState, useEffect, useMemo } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -196,7 +197,7 @@ const LopHocPhanPage: React.FC = () => {
         return;
       }
 
-      let url = 'http://localhost:3000/sinh-vien/lich-hoc/me';
+      let url = '${ENV.BACKEND_URL}/sinh-vien/lich-hoc/me';
       const params = new URLSearchParams();
       
       if (hocKyId) params.append('hocKyId', String(hocKyId));
@@ -230,7 +231,7 @@ const LopHocPhanPage: React.FC = () => {
       const token = getCookie('access_token');
       if (!token) return;
 
-      const response = await fetch('http://localhost:3000/dao-tao/nam-hoc?page=1&limit=9999', {
+      const response = await fetch('${ENV.BACKEND_URL}/dao-tao/nam-hoc?page=1&limit=9999', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,

@@ -1,5 +1,6 @@
 'use client';
 
+import { ENV } from "@/config/env";
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -228,7 +229,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ defaultCollapsed = false }) => 
 
             // Fetch thông tin sinh viên
             try {
-                const response = await fetch('http://localhost:3000/sinh-vien/me/my-profile', {
+                const response = await fetch('${ENV.BACKEND_URL}/sinh-vien/me/my-profile', {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${accessToken}`,

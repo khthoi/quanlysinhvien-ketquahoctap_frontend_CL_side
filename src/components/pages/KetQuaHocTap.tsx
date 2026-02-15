@@ -1,5 +1,6 @@
 'use client';
 
+import { ENV } from "@/config/env";
 import React, { useState, useEffect, useMemo } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -204,14 +205,14 @@ const KetQuaHocTapPage: React.FC = () => {
       }
 
       const [ketQuaRes, profileRes] = await Promise.all([
-        fetch('http://localhost:3000/ket-qua/sinh-vien/me', {
+        fetch('${ENV.BACKEND_URL}/ket-qua/sinh-vien/me', {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
           }
         }),
-        fetch('http://localhost:3000/sinh-vien/me/my-profile', {
+        fetch('${ENV.BACKEND_URL}/sinh-vien/me/my-profile', {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${token}`,
