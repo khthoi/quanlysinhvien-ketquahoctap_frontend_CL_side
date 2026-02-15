@@ -12,7 +12,7 @@ interface ModalProps {
   description?: string;
   icon?: IconDefinition;
   iconColor?: string;
-  size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
+  size?: 'sm' | 'md' | 'lg' | 'xl' | 'full' | 'full-max';
   closeOnOverlayClick?: boolean;
   closeOnEscape?: boolean;
   showCloseButton?: boolean;
@@ -69,7 +69,8 @@ const Modal: React.FC<ModalProps> = ({
     md: 'max-w-md',
     lg: 'max-w-lg',
     xl: 'max-w-2xl',
-    full: 'max-w-4xl'
+    full: 'max-w-6xl',
+    'full-max': 'max-w-full'
   };
 
   const handleOverlayClick = (e: React.MouseEvent) => {
@@ -80,7 +81,7 @@ const Modal: React.FC<ModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 overflow-y-auto"
+      className="fixed inset-0 z-50 overflow-hidden"
       aria-labelledby="modal-title"
       role="dialog"
       aria-modal="true"
@@ -93,7 +94,7 @@ const Modal: React.FC<ModalProps> = ({
 
       {/* Modal Container */}
       <div
-        className="flex min-h-full items-center justify-center p-4"
+        className="flex h-full items-center justify-center p-4"
         onClick={handleOverlayClick}
       >
         <div
@@ -101,9 +102,11 @@ const Modal: React.FC<ModalProps> = ({
           tabIndex={-1}
           className={`
             relative w-full ${sizes[size]}
+            max-h-[calc(100vh-2rem)]
             bg-white rounded-2xl shadow-2xl
             transform transition-all duration-300
             animate-in fade-in zoom-in-95
+            flex flex-col overflow-hidden
           `}
         >
           {/* Close Button */}
@@ -118,7 +121,7 @@ const Modal: React.FC<ModalProps> = ({
 
           {/* Header */}
           {(title || icon) && (
-            <div className="px-6 pt-6 pb-4">
+            <div className="px-6 pt-6 pb-4 flex-shrink-0">
               <div className="flex items-center gap-3">
                 {icon && (
                   <div className={`w-10 h-10 ${iconColor} rounded-xl flex items-center justify-center`}>
@@ -142,13 +145,13 @@ const Modal: React.FC<ModalProps> = ({
           )}
 
           {/* Body */}
-          <div className={`px-6 ${title || icon ? 'pb-6' : 'py-6'}`}>
+          <div className={`px-6 flex-1 overflow-y-auto ${title || icon ? 'pb-6' : 'py-6'}`}>
             {children}
           </div>
 
           {/* Footer */}
           {footer && (
-            <div className="px-6 py-4 bg-gray-50 rounded-b-2xl border-t border-gray-100">
+            <div className="px-6 py-4 bg-gray-50 rounded-b-2xl border-t border-gray-100 flex-shrink-0">
               {footer}
             </div>
           )}

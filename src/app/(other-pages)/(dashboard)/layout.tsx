@@ -1,4 +1,24 @@
+'use client';
+
 import AppSidebar from "@/layouts/AppSidebar";
+import { SidebarProvider, useSidebar } from "@/contexts/SidebarContext";
+
+function DashboardContent({ children }: { children: React.ReactNode }) {
+    const { isCollapsed } = useSidebar();
+    
+    return (
+        <>
+            <AppSidebar />
+            <main className={`transition-all duration-300 pt-16 md:pt-20 min-h-screen bg-white dark:bg-white ${
+                isCollapsed ? 'ml-20' : 'ml-72'
+            }`}>
+                <div className="p-6">
+                    {children}
+                </div>
+            </main>
+        </>
+    );
+}
 
 export default function OtherPagesLayout({
     children,
@@ -6,14 +26,10 @@ export default function OtherPagesLayout({
     children: React.ReactNode;
 }) {
     return (
-        <>
-            <AppSidebar />
-            <main className="pt-8 bg-white dark:bg-white">
-                <div className="pt-8"></div>
-                <div className="pt-8"></div>
-                <div className="pt-5"></div>
+        <SidebarProvider>
+            <DashboardContent>
                 {children}
-            </main>
-        </>
+            </DashboardContent>
+        </SidebarProvider>
     );
 }

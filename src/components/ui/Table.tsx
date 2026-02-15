@@ -14,7 +14,7 @@ interface Column<T> {
   key: string;
   header: string;
   sortable?: boolean;
-  width?: string;
+  width?: string | number; // number is percentage (e.g., 10 means 10%)
   align?: 'left' | 'center' | 'right';
   render?: (value: any, row: T, index: number) => React.ReactNode;
   cellClassName?: string;
@@ -100,7 +100,7 @@ function Table<T extends Record<string, any>>({
                     ${column.sortable ? 'cursor-pointer hover:bg-gray-100 select-none' : ''}
                     ${column.headerClassName || ''}
                   `}
-                  style={{ width: column.width }}
+                  style={{ width: typeof column.width === 'number' ? `${column.width}%` : column.width }}
                   onClick={() => column.sortable && onSort?.(column.key)}
                 >
                   <span className="inline-flex items-center">

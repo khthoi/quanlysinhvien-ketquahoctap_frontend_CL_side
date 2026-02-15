@@ -308,21 +308,6 @@ const LoginPage: React.FC = () => {
                                 </div>
                             </div>
 
-                            {/* Remember Me & Forgot Password */}
-                            <div className="flex items-center justify-between">
-                                <label className="flex items-center cursor-pointer">
-                                    <input
-                                        type="checkbox"
-                                        checked={rememberMe}
-                                        onChange={(e) => setRememberMe(e.target.checked)}
-                                        className="w-4 h-4 rounded border-gray-300 text-red-700 focus:ring-red-500 cursor-pointer"
-                                    />
-                                    <span className="ml-2 text-sm text-gray-600">Ghi nhớ đăng nhập</span>
-                                </label>
-                                <a href="#forgot-password" className="text-sm text-red-700 hover:text-red-800 font-medium transition-colors">
-                                    Quên mật khẩu?
-                                </a>
-                            </div>
 
                             {/* Submit Button */}
                             <button

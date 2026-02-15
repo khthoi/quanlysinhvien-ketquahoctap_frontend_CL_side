@@ -129,6 +129,10 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({
 
     // Get selected option
     const selectedOption = useMemo(() => {
+        // Treat 0, null, undefined, empty string as no value
+        if (value === 0 || value === null || value === undefined || value === '') {
+            return undefined;
+        }
         return options.find(opt => opt.value === value);
     }, [options, value]);
 
@@ -543,9 +547,9 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({
                 </div>
 
                 {/* Selected count */}
-                {value && (
+                {value && value !== 0 && value !== '' && selectedOption && (
                     <div className="px-4 py-2 border-t border-gray-100 bg-gray-50 text-xs text-gray-500">
-                        Đã chọn: <span className="font-medium text-red-700">{selectedOption?.label}</span>
+                        Đã chọn: <span className="font-medium text-red-700">{selectedOption.label}</span>
                     </div>
                 )}
             </div>,
@@ -591,7 +595,7 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({
                 {/* Selected Value Display */}
                 <span className={`
           block truncate pr-8
-          ${selectedOption ? 'text-gray-900' : 'text-gray-400'}
+          ${selectedOption ? 'text-gray-900' : 'text-gray-600'}
         `}>
                     {loading ? (
                         <span className="flex items-center">
@@ -606,14 +610,14 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({
                             <span className="truncate">{selectedOption.label}</span>
                         </span>
                     ) : (
-                        placeholder
+                        <span className="text-gray-600">{placeholder}</span>
                     )}
                 </span>
 
                 {/* Right Icons */}
                 <span className="absolute inset-y-0 right-0 flex items-center gap-1 pr-3">
                     {/* Clear Button */}
-                    {clearable && value && !disabled && !loading && (
+                    {clearable && value && value !== 0 && value !== '' && !disabled && !loading && (
                         <span
                             onClick={handleClear}
                             onMouseDown={(e) => e.stopPropagation()}
