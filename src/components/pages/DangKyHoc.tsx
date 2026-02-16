@@ -570,6 +570,10 @@ const DangKyHocPage: React.FC = () => {
       await fetchYeuCau(pagination.page, pagination.limit, activeTab, false);
     } catch (err) {
       showAlert('error', err instanceof Error ? err.message : 'Đã xảy ra lỗi');
+      setIsDangKyCaiThienModalOpen(false);
+      setIsDangKyBoSungModalOpen(false);
+      setFormData({ monHocId: 0, loaiYeuCau: 'HOC_CAI_THIEN', lyDo: '', ketQuaCuId: 0 });
+      setModalErrors({});
     }
   };
 
@@ -642,6 +646,8 @@ const DangKyHocPage: React.FC = () => {
       await fetchYeuCau(pagination.page, pagination.limit, activeTab, false);
     } catch (err) {
       showAlert('error', err instanceof Error ? err.message : 'Đã xảy ra lỗi');
+      setIsSuaModalOpen(false);
+      setSelectedYeuCau(null);
     }
   };
 
@@ -676,6 +682,8 @@ const DangKyHocPage: React.FC = () => {
       await fetchYeuCau(pagination.page, pagination.limit, activeTab, false);
     } catch (err) {
       showAlert('error', err instanceof Error ? err.message : 'Đã xảy ra lỗi');
+      setIsHuyModalOpen(false);
+      setSelectedYeuCau(null);
     }
   };
 
@@ -715,6 +723,8 @@ const DangKyHocPage: React.FC = () => {
       await fetchYeuCau(pagination.page, pagination.limit, activeTab, false);
     } catch (err) {
       showAlert('error', err instanceof Error ? err.message : 'Đã xảy ra lỗi');
+      setIsXoaModalOpen(false);
+      setSelectedYeuCau(null);
     }
   };
 
