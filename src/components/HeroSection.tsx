@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -10,6 +12,11 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 const HeroSection: React.FC = () => {
+  const scrollTo = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
   return (
     <section className="relative bg-white min-h-screen pt-20 md:pt-28">
       {/* Hero Content */}
@@ -36,11 +43,17 @@ const HeroSection: React.FC = () => {
 
             {/* CTA Buttons */}
             <div className="flex flex-wrap gap-4">
-              <button className="bg-red-700 text-white px-8 py-4 rounded-lg font-semibold hover:bg-red-800 transition-colors flex items-center space-x-2">
+              <button
+                onClick={() => scrollTo('contact')}
+                className="bg-red-700 text-white px-8 py-4 rounded-lg font-semibold hover:bg-red-800 transition-colors flex items-center space-x-2"
+              >
                 <span>Đăng ký tuyển sinh</span>
                 <FontAwesomeIcon icon={faArrowRight} />
               </button>
-              <button className="border-2 border-gray-300 text-gray-700 px-8 py-4 rounded-lg font-semibold hover:border-red-700 hover:text-red-700 transition-colors flex items-center space-x-2">
+              <button
+                onClick={() => scrollTo('about-video')}
+                className="border-2 border-gray-300 text-gray-700 px-8 py-4 rounded-lg font-semibold hover:border-red-700 hover:text-red-700 transition-colors flex items-center space-x-2"
+              >
                 <FontAwesomeIcon icon={faPlay} />
                 <span>Xem video giới thiệu</span>
               </button>
@@ -109,22 +122,24 @@ const HeroSection: React.FC = () => {
               </p>
             </div>
           </div>
-
         </div>
       </div>
 
       {/* Bottom Banner */}
       <div className="bg-gray-100 border-l-4 border-red-700 py-6">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg: px-8">
-          <div className="flex flex-col md: flex-row items-center justify-between space-y-4 md:space-y-0">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
             <div className="flex items-center space-x-4">
               <span className="bg-red-700 text-white px-3 py-1 rounded text-sm font-bold animate-pulse">HOT</span>
               <span className="text-gray-800 font-medium">Thông báo tuyển sinh năm học 2026-2027 đã được công bố!</span>
             </div>
-            <a href="#" className="text-red-700 hover:text-red-800 font-semibold flex items-center space-x-2 transition-colors">
+            <button
+              onClick={() => scrollTo('contact')}
+              className="text-red-700 hover:text-red-800 font-semibold flex items-center space-x-2 transition-colors cursor-pointer"
+            >
               <span>Xem chi tiết</span>
               <FontAwesomeIcon icon={faArrowRight} />
-            </a>
+            </button>
           </div>
         </div>
       </div>

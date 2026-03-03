@@ -346,9 +346,27 @@ const LoginPage: React.FC = () => {
                         <div className="mt-8 pt-6 border-t border-gray-100 text-center">
                             <p className="text-xs text-gray-400 leading-relaxed">
                                 Bằng việc đăng nhập, bạn đồng ý với{' '}
-                                <a href="#" className="text-red-700 hover:underline">Điều khoản sử dụng</a>
+                                <a
+                                    href="/user-terms#terms-of-use"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        router.push('/user-terms#terms-of-use');
+                                    }}
+                                    className="text-red-700 hover:underline"
+                                >
+                                    Điều khoản sử dụng
+                                </a>
                                 {' '}và{' '}
-                                <a href="#" className="text-red-700 hover:underline">Chính sách bảo mật</a>
+                                <a
+                                    href="/user-terms#privacy-policy"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        router.push('/user-terms#privacy-policy');
+                                    }}
+                                    className="text-red-700 hover:underline"
+                                >
+                                    Chính sách bảo mật
+                                </a>
                                 {' '}của Đại học Thủ Đô Hà Nội.
                             </p>
                         </div>

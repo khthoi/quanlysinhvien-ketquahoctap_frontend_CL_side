@@ -1,3 +1,5 @@
+"use client";
+
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -69,23 +71,37 @@ const AboutSection: React.FC = () => {
     }
   ];
 
-  const leadershipTeam = [
-    {
-      name: 'PGS. TS. Nguyễn Văn A',
-      position: 'Hiệu trưởng',
-      avatar: faUsers
-    },
-    {
-      name: 'PGS. TS. Trần Thị B',
-      position: 'Phó Hiệu trưởng',
-      avatar: faUsers
-    },
-    {
-      name: 'TS. Lê Văn C',
-      position: 'Phó Hiệu trưởng',
-      avatar: faUsers
+  // detect gender based on Vietnamese name prefixes/simple heuristic
+  const detectGender = (fullName: string): 'male' | 'female' => {
+    const lower = fullName.toLowerCase();
+    if (lower.includes(' thị ') || lower.includes(' hoa ') || lower.includes(' lan ') || lower.includes(' nga ') || lower.includes(' anh ') ) {
+      return 'female';
     }
-  ];
+    return 'male';
+  };
+
+  const pickColors = (gender: string) => {
+    if (gender === 'female') {
+      return { bg: 'bg-pink-100', text: 'text-pink-700' };
+    }
+    return { bg: 'bg-blue-100', text: 'text-blue-700' };
+  };
+
+  const leadershipTeam = [
+    'PGS. TS. Nguyễn Văn A',
+    'PGS. TS. Trần Thị B',
+    'TS. Lê Văn C'
+  ].map(name => {
+    const gender = detectGender(name);
+    const colors = pickColors(gender);
+    return {
+      name,
+      position: name === 'PGS. TS. Nguyễn Văn A' ? 'Hiệu trưởng' : 'Phó Hiệu trưởng',
+      avatar: gender === 'female' ? '/icons/woman.png' : '/icons/man.png',
+      iconBg: colors.bg,
+      iconColor: colors.text
+    };
+  });
 
   const achievements = [
     { icon: faMedal, label: 'Huân chương Lao động hạng Nhất' },
@@ -118,15 +134,16 @@ const AboutSection: React.FC = () => {
           {/* Left - Image & Video */}
           <div className="relative">
             <div className="bg-white rounded-3xl overflow-hidden shadow-lg">
-              <div className="bg-gray-200 aspect-video flex items-center justify-center relative">
-                <FontAwesomeIcon icon={faUniversity} className="text-8xl text-gray-300" />
-                {/* Play Button Overlay */}
-                <button className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-20 hover:bg-opacity-30 transition-all group">
-                  <div className="w-20 h-20 bg-red-700 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <FontAwesomeIcon icon={faPlay} className="text-white text-2xl ml-1" />
-                  </div>
-                </button>
-              </div>
+                <div id="about-video" className="bg-gray-200 aspect-video flex items-center justify-center relative">
+                  <iframe
+                  className="w-full h-full"
+                  src="https://www.youtube.com/embed/gD7BmNA6Pfs"
+                  title="YouTube video player"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+                </div>
               <div className="p-6">
                 <p className="text-gray-600 text-center">Video giới thiệu Đại học Thủ Đô Hà Nội</p>
               </div>
@@ -367,8 +384,8 @@ const AboutSection: React.FC = () => {
           <div className="grid sm:grid-cols-3 gap-8 max-w-4xl mx-auto">
             {leadershipTeam.map((member, index) => (
               <div key={index} className="text-center">
-                <div className="w-32 h-32 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-white shadow-lg">
-                  <FontAwesomeIcon icon={member.avatar} className="text-4xl text-gray-400" />
+                <div className="w-32 h-32 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-white shadow-lg overflow-hidden">
+                  <img src={member.avatar} alt={member.name} className="w-full h-full object-cover" />
                 </div>
                 <h4 className="text-lg font-bold text-gray-900">{member.name}</h4>
                 <p className="text-red-700 font-medium">{member.position}</p>
@@ -397,12 +414,15 @@ const AboutSection: React.FC = () => {
         <div className="mt-16 text-center">
           <p className="text-gray-600 mb-6">Tìm hiểu thêm về chúng tôi</p>
           <div className="flex flex-wrap justify-center gap-4">
-            <button className="bg-red-700 text-white px-8 py-4 rounded-lg font-semibold hover:bg-red-800 transition-colors flex items-center space-x-2">
+            <button
+              onClick={() => {
+                const el = document.getElementById('contact');
+                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }}
+              className="bg-red-700 text-white px-8 py-4 rounded-lg font-semibold hover:bg-red-800 transition-colors flex items-center space-x-2"
+            >
               <span>Liên hệ tư vấn</span>
               <FontAwesomeIcon icon={faChevronRight} />
-            </button>
-            <button className="border-2 border-gray-300 text-gray-700 px-8 py-4 rounded-lg font-semibold hover:border-red-700 hover:text-red-700 transition-colors">
-              Tải brochure
             </button>
           </div>
         </div>

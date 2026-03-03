@@ -45,6 +45,12 @@ const TestimonialSection: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'alumni' | 'student' | 'employer'>('alumni');
   const [currentSlide, setCurrentSlide] = useState(0);
 
+  // smooth scroll helper for CTA buttons
+  const scrollTo = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
   const testimonials: Testimonial[] = [
     // Alumni
     {
@@ -499,10 +505,16 @@ const TestimonialSection: React.FC = () => {
                 câu chuyện thành công của riêng mình.
               </p>
               <div className="flex flex-wrap gap-4">
-                <button className="bg-red-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-red-700 transition-colors shadow-lg shadow-red-100">
+                <button
+                  onClick={() => scrollTo('contact')}
+                  className="bg-red-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-red-700 transition-colors shadow-lg shadow-red-100"
+                >
                   Đăng ký tuyển sinh
                 </button>
-                <button className="border-2 border-red-600 text-red-600 px-8 py-4 rounded-lg font-semibold hover:bg-red-50 transition-colors">
+                <button
+                  onClick={() => scrollTo('contact')}
+                  className="border-2 border-red-600 text-red-600 px-8 py-4 rounded-lg font-semibold hover:bg-red-50 transition-colors"
+                >
                   Tìm hiểu thêm
                 </button>
               </div>

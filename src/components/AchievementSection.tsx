@@ -79,6 +79,12 @@ const AnimatedCounter: React.FC<CounterProps> = ({ end, duration, suffix = '', p
 const AchievementSection: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState<string>('all');
 
+  // smooth scroll helper for CTA buttons
+  const scrollTo = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
   const mainStats = [
     {
       icon: faTrophy,
@@ -443,7 +449,10 @@ const AchievementSection: React.FC = () => {
 
           {/* View More Button */}
           <div className="text-center mt-8">
-            <button className="inline-flex items-center space-x-2 text-red-700 font-medium hover:text-red-800 transition-colors">
+            <button
+              onClick={() => scrollTo('contact')}
+              className="inline-flex items-center space-x-2 text-red-700 font-medium hover:text-red-800 transition-colors"
+            >
               <span>Xem tất cả thành tích</span>
               <FontAwesomeIcon icon={faChevronRight} />
             </button>
@@ -484,10 +493,14 @@ const AchievementSection: React.FC = () => {
                       </div>
                     ))}
                   </div>
-                  <button className="w-full mt-6 py-3 border-2 border-gray-200 rounded-lg text-gray-700 font-medium hover:border-red-700 hover:text-red-700 hover:bg-red-50 transition-all flex items-center justify-center space-x-2">
+                  <button
+                    onClick={() => scrollTo('contact')}
+                    className="w-full mt-6 py-3 border-2 border-gray-200 rounded-lg text-gray-700 font-medium hover:border-red-700 hover:text-red-700 hover:bg-red-50 transition-all flex items-center justify-center space-x-2"
+                  >
                     <span>Tìm hiểu thêm</span>
                     <FontAwesomeIcon icon={faChevronRight} />
                   </button>
+                  
                 </div>
               </div>
             ))}

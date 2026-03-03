@@ -42,6 +42,9 @@ import {
     faInstagram,
     faTwitter
 } from '@fortawesome/free-brands-svg-icons';
+import { ENV } from "@/config/env";
+import SearchableSelect from './ui/SearchableSelect';
+import Modal from './ui/Modal';
 
 interface ContactFormData {
     fullName: string;
@@ -72,8 +75,12 @@ const ContactSection: React.FC = () => {
         message: ''
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [isSubmitted, setIsSubmitted] = useState(false);
     const [activeTab, setActiveTab] = useState<'form' | 'departments' | 'map'>('form');
+    const [modal, setModal] = useState<{ open: boolean; success: boolean; message: string }>({
+        open: false,
+        success: false,
+        message: ''
+    });
     const [selectedDepartment, setSelectedDepartment] = useState<string | null>(null);
 
     const handleInputChange = (
@@ -86,13 +93,26 @@ const ContactSection: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        setIsSubmitting(false);
-        setIsSubmitted(true);
+        try {
+            const res = await fetch(`${ENV.BACKEND_URL}/contact/send-form-information`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+            if (res.ok) {
+                setModal({ open: true, success: true, message: 'Cảm ơn bạn đã liên hệ! Chúng tôi đã nhận được tin nhắn và sẽ phản hồi trong vòng 24 giờ làm việc.' });
+                resetForm();
+            } else {
+                setModal({ open: true, success: false, message: 'Gửi tin nhắn thất bại. Vui lòng thử lại sau hoặc liên hệ trực tiếp qua hotline.' });
+            }
+        } catch {
+            setModal({ open: true, success: false, message: 'Không thể kết nối đến máy chủ. Vui lòng kiểm tra kết nối và thử lại.' });
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     const resetForm = () => {
-        setIsSubmitted(false);
         setFormData({
             fullName: '',
             email: '',
@@ -341,7 +361,7 @@ const ContactSection: React.FC = () => {
                                     <p className="text-gray-600">Điền thông tin bên dưới, chúng tôi sẽ phản hồi trong vòng 24h</p>
                                 </div>
 
-                                {!isSubmitted ? (
+                                {(
                                     <form onSubmit={handleSubmit} className="space-y-6">
                                         <div className="grid sm:grid-cols-2 gap-6">
                                             <div>
@@ -394,36 +414,25 @@ const ContactSection: React.FC = () => {
                                                 <label className="block text-sm font-medium text-gray-700 mb-2">
                                                     Chủ đề
                                                 </label>
-                                                <select
-                                                    name="subject"
+                                                <SearchableSelect
+                                                    fullWidth
+                                                    placeholder="Chọn chủ đề"
                                                     value={formData.subject}
-                                                    onChange={handleInputChange}
-                                                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all outline-none bg-white text-gray-700"
-                                                >
-                                                    {subjects.map((subject, index) => (
-                                                        <option key={index} value={index === 0 ? '' : subject} className="text-gray-700">
-                                                            {subject}
-                                                        </option>
-                                                    ))}
-                                                </select>
+                                                    onChange={(val) => setFormData(prev => ({ ...prev, subject: String(val) }))}
+                                                    options={subjects.slice(1).map(s => ({ value: s, label: s }))}
+                                                />
                                             </div>
                                             <div>
                                                 <label className="block text-sm font-medium text-gray-700 mb-2">
                                                     Phòng ban liên hệ
                                                 </label>
-                                                <select
-                                                    name="department"
+                                                <SearchableSelect
+                                                    fullWidth
+                                                    placeholder="Chọn phòng ban"
                                                     value={formData.department}
-                                                    onChange={handleInputChange}
-                                                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all outline-none bg-white text-gray-700"
-                                                >
-                                                    <option value="" className="text-gray-500">Chọn phòng ban</option>
-                                                    {departments.map((dept) => (
-                                                        <option key={dept.id} value={dept.id} className="text-gray-700">
-                                                            {dept.name}
-                                                        </option>
-                                                    ))}
-                                                </select>
+                                                    onChange={(val) => setFormData(prev => ({ ...prev, department: String(val) }))}
+                                                    options={departments.map(dept => ({ value: dept.id, label: dept.name }))}
+                                                />
                                             </div>
                                         </div>
 
@@ -437,7 +446,7 @@ const ContactSection: React.FC = () => {
                                                 onChange={handleInputChange}
                                                 required
                                                 rows={5}
-                                                className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all outline-none resize-none placeholder:text-gray-500"
+                                                className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all outline-none resize-none placeholder:text-gray-400 text-gray-900"
                                                 placeholder="Nhập nội dung tin nhắn của bạn..."
                                             ></textarea>
                                         </div>
@@ -469,32 +478,6 @@ const ContactSection: React.FC = () => {
                                             </button>
                                         </div>
                                     </form>
-                                ) : (
-                                    <div className="text-center py-16">
-                                        <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                                            <FontAwesomeIcon icon={faCheckCircle} className="text-green-600 text-5xl" />
-                                        </div>
-                                        <h4 className="text-2xl font-bold text-gray-900 mb-2">Gửi thành công!</h4>
-                                        <p className="text-gray-600 mb-8 max-w-md mx-auto">
-                                            Cảm ơn bạn đã liên hệ. Chúng tôi đã nhận được tin nhắn và sẽ phản hồi
-                                            trong vòng 24 giờ làm việc.
-                                        </p>
-                                        <div className="flex flex-wrap justify-center gap-4">
-                                            <button
-                                                onClick={resetForm}
-                                                className="bg-red-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-red-700 transition-colors shadow-lg shadow-red-100"
-                                            >
-                                                Gửi tin nhắn khác
-                                            </button>
-                                            <a
-                                                href="tel:1900xxxx"
-                                                className="border-2 border-gray-300 text-gray-700 px-6 py-3 rounded-xl font-semibold hover:border-red-600 hover:text-red-600 transition-colors flex items-center space-x-2"
-                                            >
-                                                <FontAwesomeIcon icon={faPhone} />
-                                                <span>Gọi ngay</span>
-                                            </a>
-                                        </div>
-                                    </div>
                                 )}
                             </div>
 
@@ -753,6 +736,27 @@ const ContactSection: React.FC = () => {
                     </div>
                 </div>
             </div >
+
+            {/* Result Modal */}
+            <Modal
+                isOpen={modal.open}
+                onClose={() => setModal(prev => ({ ...prev, open: false }))}
+                size="sm"
+                closeOnOverlayClick
+                icon={modal.success ? faCheckCircle : faExclamationCircle}
+                iconColor={modal.success ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}
+                title={modal.success ? 'Gửi thành công!' : 'Gửi thất bại'}
+            >
+                <p className="text-gray-600 text-sm leading-relaxed">{modal.message}</p>
+                <div className="mt-6 flex justify-end">
+                    <button
+                        onClick={() => setModal(prev => ({ ...prev, open: false }))}
+                        className={`px-6 py-2.5 rounded-xl font-semibold text-white transition-colors ${modal.success ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'}`}
+                    >
+                        Đóng
+                    </button>
+                </div>
+            </Modal>
         </section >
     );
 };

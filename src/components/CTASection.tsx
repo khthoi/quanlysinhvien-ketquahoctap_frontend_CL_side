@@ -296,13 +296,15 @@ const CTASection: React.FC = () => {
 
                     {/* Video CTA */}
                     <div className="relative bg-gray-100 rounded-3xl overflow-hidden">
-                        <div className="aspect-video flex items-center justify-center relative">
-                            <FontAwesomeIcon icon={faGraduationCap} className="text-8xl text-gray-300" />
-                            <button className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-20 hover:bg-opacity-30 transition-all group">
-                                <div className="w-20 h-20 bg-red-700 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                                    <FontAwesomeIcon icon={faPlayCircle} className="text-white text-3xl" />
-                                </div>
-                            </button>
+                        <div className="aspect-video relative">
+                            <iframe
+                                className="absolute inset-0 w-full h-full"
+                                src="https://www.youtube.com/embed/gD7BmNA6Pfs"
+                                title="Giới thiệu Đại học Thủ Đô Hà Nội"
+                                frameBorder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                            />
                         </div>
                         <div className="absolute bottom-0 left-0 right-0 bg-white bg-opacity-95 p-6">
                             <h4 className="font-bold text-gray-900 mb-1">Khám phá Đại học Thủ Đô</h4>

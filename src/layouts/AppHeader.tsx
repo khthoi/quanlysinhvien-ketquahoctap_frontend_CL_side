@@ -246,14 +246,76 @@ const AppHeader: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [lastScrollY]);
 
-  const navLinks = [
+  // Điều hướng & scroll mượt đến các section trên trang chủ
+  const scrollToSectionById = (sectionId: string) => {
+    if (typeof window === 'undefined') return;
+    const element = document.getElementById(sectionId);
+    if (!element) return;
+
+    const headerOffset = 100;
+    const y = element.getBoundingClientRect().top + window.pageYOffset - headerOffset;
+    window.scrollTo({ top: y, behavior: 'smooth' });
+  };
+
+  type NavLink = {
+    label: string;
+    href: string;
+    sectionId?: string;
+    active?: boolean;
+  };
+
+  const handleNavClick = (event: React.MouseEvent<HTMLAnchorElement>, link: NavLink) => {
+    // Trang chủ chỉ cần cuộn lên đầu
+    if (!link.sectionId) {
+      event.preventDefault();
+      if (pathname === '/') {
+        if (typeof window !== 'undefined') {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      } else {
+        router.push('/');
+      }
+      return;
+    }
+
+    event.preventDefault();
+
+    // Đang ở trang chủ: scroll mượt đến section
+    if (pathname === '/') {
+      scrollToSectionById(link.sectionId);
+      return;
+    }
+
+    // Ở route khác: lưu section cần scroll, sau đó chuyển về '/'
+    if (typeof window !== 'undefined') {
+      window.sessionStorage.setItem('scrollTargetSection', link.sectionId);
+    }
+    router.push('/');
+  };
+
+  // Sau khi chuyển route về '/', nếu có section cần scroll thì thực hiện scroll mượt
+  useEffect(() => {
+    if (pathname !== '/') return;
+    if (typeof window === 'undefined') return;
+
+    const targetId = window.sessionStorage.getItem('scrollTargetSection');
+    if (targetId) {
+      window.sessionStorage.removeItem('scrollTargetSection');
+      // Đợi DOM render xong
+      setTimeout(() => {
+        scrollToSectionById(targetId);
+      }, 200);
+    }
+  }, [pathname]);
+
+  const navLinks: NavLink[] = [
     { label: 'Trang chủ', href: '/', active: true },
-    { label:  'Giới thiệu', href: '#about' },
-    { label: 'Đào tạo', href: '#programs' },
-    { label: 'Tuyển sinh', href: '#admission' },
-    { label: 'Lịch sử', href: '#history' },
-    { label: 'Thành tựu', href: '#achievements' },
-    { label: 'Liên hệ', href: '#contact' }
+    { label: 'Giới thiệu', href: '/#about', sectionId: 'about' },
+    { label: 'Đào tạo', href: '/#programs', sectionId: 'programs' },
+    { label: 'Tuyển sinh', href: '/#admission', sectionId: 'admission' },
+    { label: 'Lịch sử', href: '/#history', sectionId: 'history' },
+    { label: 'Thành tựu', href: '/#achievements', sectionId: 'achievements' },
+    { label: 'Liên hệ', href: '/#contact', sectionId: 'contact' }
   ];
 
   // Component User Dropdown
@@ -431,13 +493,13 @@ const AppHeader: React.FC = () => {
             {/* Right - Social & Language */}
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
-                <a href="#" className="w-7 h-7 bg-gray-200 hover:bg-red-700 hover:text-white text-gray-600 rounded-full flex items-center justify-center transition-colors">
+                <a href="https://www.facebook.com/khakham132" className="w-7 h-7 bg-gray-200 hover:bg-red-700 hover:text-white text-gray-600 rounded-full flex items-center justify-center transition-colors">
                   <FontAwesomeIcon icon={faFacebookF} className="text-xs" />
                 </a>
-                <a href="#" className="w-7 h-7 bg-gray-200 hover:bg-red-700 hover:text-white text-gray-600 rounded-full flex items-center justify-center transition-colors">
+                <a href="https://www.youtube.com/@khatrantan8945" className="w-7 h-7 bg-gray-200 hover:bg-red-700 hover:text-white text-gray-600 rounded-full flex items-center justify-center transition-colors">
                   <FontAwesomeIcon icon={faYoutube} className="text-xs" />
                 </a>
-                <a href="#" className="w-7 h-7 bg-gray-200 hover:bg-red-700 hover:text-white text-gray-600 rounded-full flex items-center justify-center transition-colors">
+                <a href="https://www.tiktok.com/@khakhamn" className="w-7 h-7 bg-gray-200 hover:bg-red-700 hover:text-white text-gray-600 rounded-full flex items-center justify-center transition-colors">
                   <FontAwesomeIcon icon={faTiktok} className="text-xs" />
                 </a>
               </div>
@@ -476,6 +538,7 @@ const AppHeader: React.FC = () => {
                 <a
                   key={index}
                   href={link.href}
+                  onClick={(event) => handleNavClick(event, link)}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                     link.active
                       ? 'text-red-700 bg-red-50'
@@ -489,10 +552,6 @@ const AppHeader: React.FC = () => {
 
             {/* Right Actions */}
             <div className="flex items-center space-x-3">
-              {/* Search Button */}
-              <button className="w-10 h-10 rounded-full bg-gray-100 hover:bg-red-100 text-gray-600 hover:text-red-700 flex items-center justify-center transition-colors">
-                <FontAwesomeIcon icon={faSearch} />
-              </button>
 
               {/* Auth Section - Desktop */}
               <div className="hidden md:block">
@@ -545,7 +604,10 @@ const AppHeader: React.FC = () => {
                     ? 'text-red-700 bg-red-50'
                     : 'text-gray-700 hover:text-red-700 hover:bg-red-50'
                 }`}
-                onClick={() => setIsMobileMenuOpen(false)}
+                onClick={(event) => {
+                  handleNavClick(event, link);
+                  setIsMobileMenuOpen(false);
+                }}
               >
                 {link.label}
               </a>
@@ -601,13 +663,13 @@ const AppHeader: React.FC = () => {
 
           {/* Mobile Social Links */}
           <div className="flex items-center justify-center space-x-3 mt-4 pt-4 border-t border-gray-100">
-            <a href="#" className="w-10 h-10 bg-gray-100 hover:bg-red-700 hover:text-white text-gray-600 rounded-full flex items-center justify-center transition-colors">
+            <a href="https://www.facebook.com/khakham132" className="w-10 h-10 bg-gray-100 hover:bg-red-700 hover:text-white text-gray-600 rounded-full flex items-center justify-center transition-colors">
               <FontAwesomeIcon icon={faFacebookF} />
             </a>
-            <a href="#" className="w-10 h-10 bg-gray-100 hover:bg-red-700 hover:text-white text-gray-600 rounded-full flex items-center justify-center transition-colors">
+            <a href="https://www.youtube.com/@khatrantan8945" className="w-10 h-10 bg-gray-100 hover:bg-red-700 hover:text-white text-gray-600 rounded-full flex items-center justify-center transition-colors">
               <FontAwesomeIcon icon={faYoutube} />
             </a>
-            <a href="#" className="w-10 h-10 bg-gray-100 hover:bg-red-700 hover:text-white text-gray-600 rounded-full flex items-center justify-center transition-colors">
+            <a href="https://www.tiktok.com/@khakhamn" className="w-10 h-10 bg-gray-100 hover:bg-red-700 hover:text-white text-gray-600 rounded-full flex items-center justify-center transition-colors">
               <FontAwesomeIcon icon={faTiktok} />
             </a>
           </div>
